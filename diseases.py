@@ -125,3 +125,5 @@ if hasattr(model, 'feature_importances_'):
         st.bar_chart(importance.set_index('Feature'))
     else:
         st.warning(f"Feature count mismatch: Model expects {num_features_model} features, but {num_features_defined} are defined. Adjust feature_columns.")
+
+        
