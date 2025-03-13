@@ -26,6 +26,10 @@ try:
 except Exception as e:
     st.error(f"Failed to load image: {str(e)}")
 
+# Home screen prompt
+if not disease:
+    st.write("**Please select a disease from the sidebar to proceed.**")
+
 # Model and scaler paths
 model_paths = {
     "Asthma": {
@@ -37,12 +41,13 @@ model_paths = {
     "Chronic Kidney Disease": "/home/ichigo/Desktop/Medical diagnosis uisng AI/Chronic_Kidney_Dsease_.pkl",
     "Diabetes": "/home/ichigo/Desktop/Medical diagnosis uisng AI/diabetes_model.pkl",
     "Heart Disease": "/home/ichigo/Desktop/Medical diagnosis uisng AI/Heart_diseases.pkl",
-    "Liver Diseases": "/home/ichigo/Desktop/Medical diagnosis uisng AI/Liver_diseases_data.pkl"
+    "Liver Diseases": "/home/ichigo/Desktop/Medical diagnosis uisng AI/liver_model.pkl"
 }
 
-# Load models and scaler for Diabetes
+# Load models and scalers
 models = {s: pickle.load(open(p, 'rb')) for s, p in model_paths["Asthma"].items()} if disease == "Asthma" else {disease: pickle.load(open(model_paths[disease], 'rb')) if disease else None}
 diabetes_scaler = pickle.load(open('/home/ichigo/Desktop/Medical diagnosis uisng AI/diabetes_scaler.pkl', 'rb')) if disease == "Diabetes" else None
+liver_scaler = pickle.load(open('/home/ichigo/Desktop/Medical diagnosis uisng AI/liver_scaler.pkl', 'rb')) if disease == "Liver Diseases" else None
 
 # Feature columns
 features = {
@@ -51,10 +56,10 @@ features = {
     "Chronic Kidney Disease": ['GFR', 'SerumCreatinine', 'Age', 'SystolicBP', 'BMI', 'ProteinInUrine', 'DiastolicBP', 'HemoglobinLevels', 'FastingBloodSugar', 'FamilyHistoryKidneyDisease'],
     "Diabetes": ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'],
     "Heart Disease": ['ca', 'thal', 'cp', 'oldpeak', 'thalach', 'exang', 'age'],
-    "Liver Diseases": ['LiverFunctionTest', 'BMI', 'AlcoholConsumption', 'Diabetes', 'Age']
+    "Liver Diseases": ['Age', 'Gender', 'BMI', 'AlcoholConsumption', 'Smoking', 'GeneticRisk', 'PhysicalActivity', 'Diabetes', 'Hypertension', 'LiverFunctionTest']
 }
 
-# Input ranges
+# Input ranges (updated for Liver Diseases based on dataset)
 input_ranges = {
     "Asthma": {col: (0, 1) for col in features["Asthma"]},
     "Breast Cancer": {
@@ -73,7 +78,9 @@ input_ranges = {
     },
     "Heart Disease": {'ca': (0, 4), 'thal': (1, 3), 'cp': (0, 3), 'oldpeak': (0.0, 6.0), 'thalach': (60, 220), 'exang': (0, 1), 'age': (20, 100)},
     "Liver Diseases": {
-        'LiverFunctionTest': (0.0, 100.0), 'BMI': (15.0, 50.0), 'AlcoholConsumption': (0, 100), 'Diabetes': (0, 1), 'Age': (0, 120)
+        'Age': (20, 80), 'Gender': (0, 1), 'BMI': (15.0, 40.0), 'AlcoholConsumption': (0.0, 20.0),
+        'Smoking': (0, 1), 'GeneticRisk': (0, 2), 'PhysicalActivity': (0.0, 10.0),
+        'Diabetes': (0, 1), 'Hypertension': (0, 1), 'LiverFunctionTest': (20.0, 100.0)
     }
 }
 
@@ -83,13 +90,15 @@ if disease:
     input_data = {}
     for col in features[disease]:
         min_val, max_val = input_ranges[disease].get(col, (0.0, 100.0))
-        input_data[col] = st.number_input(col, min_value=float(min_val), max_value=float(max_val), value=float((min_val + max_val) / 2))
+        input_data[col] = st.number_input(col, min_value=float(min_val), max_value=float(max_val), value=float(min_val))
 
     input_df = pd.DataFrame([input_data])
 
-    # Scale input for Diabetes
-    if disease == "Diabetes":
+    # Scale input for Diabetes or Liver Diseases
+    if disease == "Diabetes" and diabetes_scaler:
         input_df_scaled = diabetes_scaler.transform(input_df)
+    elif disease == "Liver Diseases" and liver_scaler:
+        input_df_scaled = liver_scaler.transform(input_df)
     else:
         input_df_scaled = StandardScaler().fit_transform(input_df)
 
