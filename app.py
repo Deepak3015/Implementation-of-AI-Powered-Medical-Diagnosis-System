@@ -9,7 +9,7 @@ st.title("Medical Diagnosis Using AI")
 # Sidebar for disease selection
 disease = st.sidebar.selectbox("Select Disease", ["", "Asthma", "Breast Cancer", "Chronic Kidney Disease", "Diabetes", "Heart Disease", "Liver Diseases"])
 
-# Image paths (using absolute paths to troubleshoot)
+# Image paths
 images = {
     "": "/home/ichigo/Desktop/Medical diagnosis uisng AI/images/home_medical.jpg",
     "Asthma": "/home/ichigo/Desktop/Medical diagnosis uisng AI/images/asthma_lungs.jpeg",
@@ -20,16 +20,13 @@ images = {
     "Liver Diseases": "/home/ichigo/Desktop/Medical diagnosis uisng AI/images/liver_disease.jpg"
 }
 
-# Display image based on selected disease
+# Display image
 try:
-    if disease:
-        st.image(images[disease], caption=f"{disease} Image", width=None)
-    else:
-        st.image(images[""], caption="Medical Diagnosis Home", width=None)
+    st.image(images[disease] if disease else images[""], caption=f"{disease or 'Medical Diagnosis Home'} Image", width=None)
 except Exception as e:
     st.error(f"Failed to load image: {str(e)}")
 
-# Model paths
+# Model and scaler paths
 model_paths = {
     "Asthma": {
         "Mild": "/home/ichigo/Desktop/Medical diagnosis uisng AI/Asthama_Severity_Mild_model.pkl",
@@ -43,8 +40,9 @@ model_paths = {
     "Liver Diseases": "/home/ichigo/Desktop/Medical diagnosis uisng AI/Liver_diseases_data.pkl"
 }
 
-# Load models
+# Load models and scaler for Diabetes
 models = {s: pickle.load(open(p, 'rb')) for s, p in model_paths["Asthma"].items()} if disease == "Asthma" else {disease: pickle.load(open(model_paths[disease], 'rb')) if disease else None}
+diabetes_scaler = pickle.load(open('/home/ichigo/Desktop/Medical diagnosis uisng AI/diabetes_scaler.pkl', 'rb')) if disease == "Diabetes" else None
 
 # Feature columns
 features = {
@@ -56,7 +54,7 @@ features = {
     "Liver Diseases": ['LiverFunctionTest', 'BMI', 'AlcoholConsumption', 'Diabetes', 'Age']
 }
 
-# Input ranges for numerical features
+# Input ranges
 input_ranges = {
     "Asthma": {col: (0, 1) for col in features["Asthma"]},
     "Breast Cancer": {
@@ -79,36 +77,35 @@ input_ranges = {
     }
 }
 
-# Categorical options
-categorical_options = {
-    "Asthma": {col: {0: "No", 1: "Yes"} for col in features["Asthma"]},
-    "Chronic Kidney Disease": {'FamilyHistoryKidneyDisease': {0: "No", 1: "Yes"}},
-    "Heart Disease": {'cp': {0: "Typical Angina", 1: "Atypical Angina", 2: "Non-Anginal Pain", 3: "Asymptomatic"}, 'exang': {0: "No", 1: "Yes"}, 'thal': {1: "Normal", 2: "Fixed Defect", 3: "Reversible Defect"}},
-    "Liver Diseases": {'Diabetes': {0: "No", 1: "Yes"}}
-}
-
-# Input form (only show if a disease is selected)
+# Input form
 if disease:
     st.header(f"Enter {disease} Data")
     input_data = {}
     for col in features[disease]:
-        if col in categorical_options.get(disease, {}):
-            options = categorical_options[disease][col]
-            input_data[col] = st.selectbox(col, list(options.keys()), format_func=lambda x: options[x])
-        else:
-            min_val, max_val = input_ranges[disease].get(col, (0.0, 100.0))
-            input_data[col] = st.number_input(col, min_value=float(min_val), max_value=float(max_val), value=float((min_val + max_val) / 2))
+        min_val, max_val = input_ranges[disease].get(col, (0.0, 100.0))
+        input_data[col] = st.number_input(col, min_value=float(min_val), max_value=float(max_val), value=float((min_val + max_val) / 2))
 
     input_df = pd.DataFrame([input_data])
-    input_df_scaled = StandardScaler().fit_transform(input_df)
+
+    # Scale input for Diabetes
+    if disease == "Diabetes":
+        input_df_scaled = diabetes_scaler.transform(input_df)
+    else:
+        input_df_scaled = StandardScaler().fit_transform(input_df)
 
     # Prediction
     if st.button("Predict"):
-        probs = {s: m.predict_proba(input_df)[:, 1][0] for s, m in models.items()} if disease == "Asthma" else {disease: models[disease].predict_proba(input_df_scaled)[:, 1][0]}
-        pred = max(probs, key=probs.get) if disease == "Asthma" else models[disease].predict(input_df_scaled)[0]
-        result = f"Predicted Severity: {pred.capitalize()} (Confidence: {probs[pred]:.2f})" if disease == "Asthma" else f"Diagnosis: {disease.replace(' ', '')} {'Present' if pred == 1 else 'Absent'} (Confidence: {probs[disease]:.2f})"
-        st.success(result)
-        if disease == "Asthma": st.dataframe(pd.DataFrame({"Severity": probs.keys(), "Probability": [f"{p:.2f}" for p in probs.values()]}))
+        if disease == "Asthma":
+            probs = {s: m.predict_proba(input_df)[:, 1][0] for s, m in models.items()}
+            pred = max(probs, key=probs.get)
+            result = f"Predicted Severity: {pred.capitalize()} (Confidence: {probs[pred]:.2f})"
+            st.success(result)
+            st.dataframe(pd.DataFrame({"Severity": probs.keys(), "Probability": [f"{p:.2f}" for p in probs.values()]}))
+        else:
+            probs = models[disease].predict_proba(input_df_scaled)[:, 1][0]
+            pred = models[disease].predict(input_df_scaled)[0]
+            result = f"Diagnosis: {disease.replace(' ', '')} {'Present' if pred == 1 else 'Absent'} (Confidence: {probs:.2f})"
+            st.success(result)
 
 # Disclaimer
 st.write("**Disclaimer**: For educational purposes only. Consult a healthcare professional.")
