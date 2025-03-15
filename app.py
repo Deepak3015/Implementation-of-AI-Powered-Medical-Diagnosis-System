@@ -9,7 +9,7 @@ st.title("Medical Diagnosis Using AI")
 # Sidebar for disease selection
 disease = st.sidebar.selectbox("Select Disease", ["", "Asthma", "Breast Cancer", "Chronic Kidney Disease", "Diabetes", "Heart Disease", "Liver Diseases"])
 
-# Image paths (unchanged)
+# Image paths
 images = {
     "": "/home/ichigo/Desktop/Medical diagnosis uisng AI/images/home_medical.jpg",
     "Asthma": "/home/ichigo/Desktop/Medical diagnosis uisng AI/images/asthma_lungs.jpeg",
@@ -20,17 +20,17 @@ images = {
     "Liver Diseases": "/home/ichigo/Desktop/Medical diagnosis uisng AI/images/liver_disease.jpg"
 }
 
-# Display image (unchanged)
+# Display image
 try:
     st.image(images[disease] if disease else images[""], caption=f"{disease or 'Medical Diagnosis Home'} Image", width=None)
 except Exception as e:
     st.error(f"Failed to load image: {str(e)}")
 
-# Home screen prompt (unchanged)
+# Home screen prompt
 if not disease:
     st.write("**Please select a disease from the sidebar to proceed.**")
 
-# Model and scaler paths (unchanged)
+# Model and scaler paths
 model_paths = {
     "Asthma": {
         "Mild": "/home/ichigo/Desktop/Medical diagnosis uisng AI/Asthama_Severity_Mild_model.pkl",
@@ -44,14 +44,14 @@ model_paths = {
     "Liver Diseases": "/home/ichigo/Desktop/Medical diagnosis uisng AI/liver_model.pkl"
 }
 
-# Load models and scalers (unchanged)
+# Load models and scalers
 models = {s: pickle.load(open(p, 'rb')) for s, p in model_paths["Asthma"].items()} if disease == "Asthma" else {disease: pickle.load(open(model_paths[disease], 'rb')) if disease else None}
 diabetes_scaler = pickle.load(open('/home/ichigo/Desktop/Medical diagnosis uisng AI/diabetes_scaler.pkl', 'rb')) if disease == "Diabetes" else None
 liver_scaler = pickle.load(open('/home/ichigo/Desktop/Medical diagnosis uisng AI/liver_scaler.pkl', 'rb')) if disease == "Liver Diseases" else None
 
-# Feature columns (updated for Asthma)
+# Feature columns
 features = {
-    "Asthma": ['Gender_Female', 'Gender_Male', 'Age_0-9', 'Age_20-24', 'Pains'],
+    "Asthma": ['Difficulty-in-Breathing', 'Dry-Cough', 'Pains', 'Tiredness', 'Age_0-9'],
     "Breast Cancer": ['concave points_worst', 'perimeter_worst', 'area_worst', 'radius_worst', 'concave points_mean', 'perimeter_mean', 'area_mean', 'radius_mean', 'concavity_mean', 'concavity_worst'],
     "Chronic Kidney Disease": ['GFR', 'SerumCreatinine', 'Age', 'SystolicBP', 'BMI', 'ProteinInUrine', 'DiastolicBP', 'HemoglobinLevels', 'FastingBloodSugar', 'FamilyHistoryKidneyDisease'],
     "Diabetes": ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'],
@@ -59,15 +59,9 @@ features = {
     "Liver Diseases": ['Age', 'Gender', 'BMI', 'AlcoholConsumption', 'Smoking', 'GeneticRisk', 'PhysicalActivity', 'Diabetes', 'Hypertension', 'LiverFunctionTest']
 }
 
-# Input ranges (updated for Asthma)
+# Input ranges (updated for Liver Diseases based on dataset)
 input_ranges = {
-    "Asthma": {
-        'Gender_Female': (0, 1),
-        'Gender_Male': (0, 1),
-        'Age_0-9': (0, 1),
-        'Age_20-24': (0, 1),
-        'Pains': (0, 1)
-    },
+    "Asthma": {col: (0, 1) for col in features["Asthma"]},
     "Breast Cancer": {
         'concave points_worst': (0.0, 0.3), 'perimeter_worst': (50.0, 250.0), 'area_worst': (200.0, 2500.0),
         'radius_worst': (7.0, 36.0), 'concave points_mean': (0.0, 0.2), 'perimeter_mean': (40.0, 200.0),
@@ -90,24 +84,17 @@ input_ranges = {
     }
 }
 
-# Input form (updated for Asthma)
+# Input form
 if disease:
     st.header(f"Enter {disease} Data")
     input_data = {}
-    if disease == "Asthma":
-        input_data['Gender_Female'] = 1 if st.checkbox("Gender: Female") else 0
-        input_data['Gender_Male'] = 1 if st.checkbox("Gender: Male") else 0
-        input_data['Age_0-9'] = 1 if st.checkbox("Age: 0-9") else 0
-        input_data['Age_20-24'] = 1 if st.checkbox("Age: 20-24") else 0
-        input_data['Pains'] = 1 if st.checkbox("Pains") else 0
-    else:
-        for col in features[disease]:
-            min_val, max_val = input_ranges[disease].get(col, (0.0, 100.0))
-            input_data[col] = st.number_input(col, min_value=float(min_val), max_value=float(max_val), value=float(min_val))
+    for col in features[disease]:
+        min_val, max_val = input_ranges[disease].get(col, (0.0, 100.0))
+        input_data[col] = st.number_input(col, min_value=float(min_val), max_value=float(max_val), value=float(min_val))
 
     input_df = pd.DataFrame([input_data])
 
-    # Scale input for Diabetes or Liver Diseases (unchanged)
+    # Scale input for Diabetes or Liver Diseases
     if disease == "Diabetes" and diabetes_scaler:
         input_df_scaled = diabetes_scaler.transform(input_df)
     elif disease == "Liver Diseases" and liver_scaler:
@@ -115,7 +102,7 @@ if disease:
     else:
         input_df_scaled = StandardScaler().fit_transform(input_df)
 
-    # Prediction (unchanged)
+    # Prediction
     if st.button("Predict"):
         if disease == "Asthma":
             probs = {s: m.predict_proba(input_df)[:, 1][0] for s, m in models.items()}
@@ -129,5 +116,5 @@ if disease:
             result = f"Diagnosis: {disease.replace(' ', '')} {'Present' if pred == 1 else 'Absent'} (Confidence: {probs:.2f})"
             st.success(result)
 
-# Disclaimer (unchanged)
+# Disclaimer
 st.write("**Disclaimer**: For educational purposes only. Consult a healthcare professional.")
