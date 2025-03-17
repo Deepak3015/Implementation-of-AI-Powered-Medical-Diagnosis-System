@@ -43,21 +43,10 @@ model_paths = {
 
 # Load models and scalers
 try:
-    models = {}
-    if disease:
-        with open(model_paths[disease], "rb") as f:
-            model = pickle.load(f)
-            if hasattr(model, 'predict_proba'):  # Check if the loaded object is a valid model
-                models[disease] = model
-            else:
-                st.error(f"Invalid model file for {disease}. Expected a trained model, but got {type(model)}.")
-                models[disease] = None
+    models = {disease: pickle.load(open(model_paths[disease], 'rb')) if disease else None}
 except FileNotFoundError as e:
     st.error(f"Model file not found: {e}")
-    models[disease] = None
-except Exception as e:
-    st.error(f"Error loading model for {disease}: {e}")
-    models[disease] = None
+    models = None
 
 scaler = pickle.load(open('/home/ichigo/Desktop/Medical diagnosis uisng AI/scaler.pkl', 'rb')) if disease == "Asthma" else None
 diabetes_scaler = pickle.load(open('/home/ichigo/Desktop/Medical diagnosis uisng AI/diabetes_scaler.pkl', 'rb')) if disease == "Diabetes" else None
@@ -76,7 +65,7 @@ features = {
     "Breast Cancer": ['concave points_worst', 'perimeter_worst', 'area_worst', 'radius_worst', 'concave points_mean', 'perimeter_mean', 'area_mean', 'radius_mean', 'concavity_mean', 'concavity_worst'],
     "Chronic Kidney Disease": ['GFR', 'SerumCreatinine', 'Age', 'SystolicBP', 'BMI', 'ProteinInUrine', 'DiastolicBP', 'HemoglobinLevels', 'FastingBloodSugar', 'FamilyHistoryKidneyDisease'],
     "Diabetes": ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'],
-    "Heart Disease": ['age', 'sex', 'cp', 'trestbps', 'chol', 'thalach', 'exang', 'oldpeak', 'ca', 'thal'],  # Updated to include all 10 features
+    "Heart Disease": ['ca', 'thal', 'cp', 'oldpeak', 'thalach', 'exang', 'age'],
     "Liver Diseases": ['Age', 'Gender', 'BMI', 'AlcoholConsumption', 'Smoking', 'GeneticRisk', 'PhysicalActivity', 'Diabetes', 'Hypertension', 'LiverFunctionTest']
 }
 
@@ -145,16 +134,13 @@ input_ranges = {
         'Age': (0, 120)
     },
     "Heart Disease": {
-        'age': (20, 100),          # Age of the patient
-        'sex': (0, 1),             # Sex (0 = female, 1 = male)
-        'cp': (0, 3),              # Chest pain type (0-3)
-        'trestbps': (90, 200),     # Resting blood pressure (in mm Hg)
-        'chol': (100, 600),        # Serum cholesterol (in mg/dl)
-        'thalach': (60, 220),      # Maximum heart rate achieved
-        'exang': (0, 1),           # Exercise-induced angina (0 = no, 1 = yes)
-        'oldpeak': (0.0, 6.0),     # ST depression induced by exercise relative to rest
-        'ca': (0, 4),              # Number of major vessels (0-4) colored by fluoroscopy
-        'thal': (1, 3)             # Thalassemia (1 = normal, 2 = fixed defect, 3 = reversible defect)
+        'ca': (0, 4),
+        'thal': (1, 3),
+        'cp': (0, 3),
+        'oldpeak': (0.0, 6.0),
+        'thalach': (60, 220),
+        'exang': (0, 1),
+        'age': (20, 100)
     },
     "Liver Diseases": {
         'Age': (20, 80),
@@ -201,14 +187,17 @@ if disease:
 
     # Prediction
     if st.button("Predict"):
-        if models.get(disease) is not None:
-            try:
+        if models is not None:
+            if disease == "Asthma":
                 probs = models[disease].predict_proba(input_df_scaled)[:, 1][0]
                 pred = models[disease].predict(input_df_scaled)[0]
                 result = f"Diagnosis: {disease.replace(' ', '')} {'Present' if pred == 1 else 'Absent'} (Confidence: {probs:.2f})"
                 st.success(result)
-            except Exception as e:
-                st.error(f"Error during prediction: {e}")
+            else:
+                probs = models[disease].predict_proba(input_df_scaled)[:, 1][0]
+                pred = models[disease].predict(input_df_scaled)[0]
+                result = f"Diagnosis: {disease.replace(' ', '')} {'Present' if pred == 1 else 'Absent'} (Confidence: {probs:.2f})"
+                st.success(result)
         else:
             st.error("Unable to make predictions. Models are not loaded.")
 
