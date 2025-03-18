@@ -1,7 +1,8 @@
 Medical Diagnosis Using AI
 Welcome to the Medical Diagnosis Using AI project! This Streamlit application leverages machine learning models to predict the likelihood of various diseases (Asthma, Breast Cancer, Chronic Kidney Disease, Diabetes, Heart Disease, and Liver Diseases) based on user-provided data. The app features an intuitive interface with disease-specific input forms, predictions with confidence scores, and visually appealing images for each disease.
 Medical Diagnosis App
-(Note: Replace the placeholder image URL with a screenshot of your app once available.)
+![alt text](<Screenshot from 2025-02-23 15-36-47.png>) ![alt text](<Screenshot from 2025-03-15 08-16-56.png>) ![alt text](<Screenshot from 2025-03-15 08-19-07.png>)
+
 Table of Contents
 Features (#features)
 
@@ -42,10 +43,7 @@ Steps
 Clone the Repository:
 If hosted on GitHub, clone it to your local machine:
 
-git clone https://github.com/yourusername/medical-diagnosis-app.git
-cd medical-diagnosis-app
-
-(Replace yourusername/medical-diagnosis-app with your actual repository URL.)
+git clone https://github.com/Deepak3015/Implementation-of-AI-Powered-Medical-Diagnosis-System.git
 
 Install Dependencies:
 Install the required Python packages:
@@ -133,7 +131,7 @@ Push to GitHub:
 git init
 git add .
 git commit -m "Initial commit with app and models"
-git remote add origin https://github.com/yourusername/medical-diagnosis-app.git
+git remote add origin https://github.com/Deepak3015/Implementation-of-AI-Powered-Medical-Diagnosis-System.git
 git push -u origin main
 
 If model files exceed 100MB, use Git LFS:
@@ -157,7 +155,7 @@ Select your repository and set the main file path to diseases.py.
 Click "Deploy" and wait for the app to go live.
 
 Access the Deployed App:
-Use the provided URL (e.g., https://yourappname.streamlit.app).
+Use the provided URL (e.g., https://app.py.streamlit.app).
 
 Project Structure
 
@@ -203,25 +201,3 @@ Inspired by the need for accessible medical diagnosis tools.
 
 Thanks to the open-source community for machine learning libraries like scikit-learn.
 
-How to Use the README
-Create the File:
-Copy the text above into a new file named README.md in /home/ichigo/Desktop/Medical diagnosis uisng AI/.
-
-Save it.
-
-Add to Git (if applicable):
-If you’re using Git, stage and commit the file:
-
-git add README.md
-git commit -m "Add README file"
-git push
-
-Customize:
-Replace the placeholder image URL (https://via.placeholder.com/1920x640.png?text=Medical+Diagnosis+Using+AI) with a real screenshot of your app once you have one.
-
-Update the GitHub repository URL with your actual repo link.
-
-Add any additional acknowledgments or contributors as needed.
-
-ferf
-dfvd
