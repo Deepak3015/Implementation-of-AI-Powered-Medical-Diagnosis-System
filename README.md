@@ -1,203 +1,150 @@
-Medical Diagnosis Using AI
-Welcome to the Medical Diagnosis Using AI project! This Streamlit application leverages machine learning models to predict the likelihood of various diseases (Asthma, Breast Cancer, Chronic Kidney Disease, Diabetes, Heart Disease, and Liver Diseases) based on user-provided data. The app features an intuitive interface with disease-specific input forms, predictions with confidence scores, and visually appealing images for each disease.
-Medical Diagnosis App
-![alt text](<Screenshot from 2025-02-23 15-36-47.png>) ![alt text](<Screenshot from 2025-03-15 08-16-56.png>) ![alt text](<Screenshot from 2025-03-15 08-19-07.png>)
+# 🧠 **AI-Powered Medical Diagnosis System**
 
-Table of Contents
-Features (#features)
+<p align="center">
+  <img src="https://img.icons8.com/clouds/500/000000/artificial-intelligence.png" width="180" alt="AI Diagnosis Logo" />
+</p>
 
-Installation (#installation)
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-ML-blue?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Streamlit-Frontend-orange?style=for-the-badge&logo=streamlit&logoColor=white" />
+  <img src="https://img.shields.io/badge/Scikit--Learn-Model-green?style=for-the-badge&logo=scikit-learn&logoColor=white" />
+</p>
 
-Usage (#usage)
+---
 
-Deployment (#deployment)
+## ✨ **Project Overview**
 
-Project Structure (#project-structure)
+**AI-Powered Medical Diagnosis System** is a **machine learning-based healthcare application** designed to assist in early detection and risk prediction of multiple diseases.
 
-Contributing (#contributing)
+### 🩺 **Supported Diseases:**
 
-License (#license)
+- Cardiovascular Disease  
+- Diabetes  
+- Chronic Respiratory Diseases  
+- Tuberculosis  
+- Diarrheal Diseases
 
-Acknowledgments (#acknowledgments)
+> **Built with:** Python, Streamlit, Scikit-learn, Pandas
 
-Features
-Multi-Disease Prediction: Supports diagnosis for six diseases with tailored input fields.
+---
 
-Machine Learning Models: Utilizes pre-trained models (e.g., Random Forest) for accurate predictions.
+---
 
-Visual Interface: Displays disease-specific images and a welcoming home image.
+## 🧩 **Features**
 
-Confidence Scores: Provides probability estimates for predictions.
+| **Module**        | **Description**                                |
+|------------------|------------------------------------------------|
+| **Multi-Disease Prediction** | Predict risk for 5 major diseases |
+| **User Input Form** | Interactive fields for patient data |
+| **Model Inference** | Uses ML models trained on healthcare datasets |
+| **Report Display** | Shows prediction results in real-time |
 
-User-Friendly: Simple sidebar selection and input forms with predefined ranges.
+---
 
-Educational Disclaimer: Includes a note to consult healthcare professionals.
+## 🗂️ **Project Structure**
 
-Installation
-Prerequisites
-Python 3.7 or higher
+```
+AI-Powered-Medical-Diagnosis-System/
+├── models/           # Trained ML models (pickle files)
+├── data/             # Datasets used for training/testing
+├── app.py            # Streamlit frontend code
+├── model_training.py # ML model building scripts
+├── requirements.txt  # Required Python libraries
+├── README.md         # Project documentation
+```
 
-pip (Python package manager)
+---
 
-Steps
-Clone the Repository:
-If hosted on GitHub, clone it to your local machine:
+## 🚀 **How to Run Locally**
 
-git clone https://github.com/Deepak3015/Implementation-of-AI-Powered-Medical-Diagnosis-System.git
+### **Pre-requisites**
 
-Install Dependencies:
-Install the required Python packages:
+- 🐍 Python 3.7+  
+- 📦 Install requirements:
 
+```bash
 pip install -r requirements.txt
+```
 
-If requirements.txt is not present, create it with:
+---
 
-pip freeze > requirements.txt
+### **Run the App**
 
-Ensure it includes at least:
+```bash
+streamlit run app.py
+```
 
-streamlit
-pandas
-scikit-learn
+---
 
-Verify Model Files:
-Ensure all model files are in the project directory:
-Asthama_Severity_Mild_model.pkl
+## ⚙️ **Technology Stack**
 
-Asthama_Severity_Moderate_model.pkl
+| 🖥️ Frontend | ⚙️ Backend (ML) | 🗄️ Data |
+|-------------|-----------------|---------|
+| Streamlit   | Scikit-learn, Pandas | Healthcare Datasets |
 
-Asthama_Severity_None_model.pkl
+---
 
-breast_cancer_model.pkl
+## 📊 **Screenshots**
 
-Chronic_Kidney_Dsease_.pkl
+### 🧑‍⚕️ **Disease Selection Screen**
 
-diabetes_model.pkl
+<p align="center">
+<img width="1920" height="879" alt="image" src="https://github.com/user-attachments/assets/b100179f-c6e4-4fa5-b6be-ec4f59f8b187" />
 
-Heart_diseases.pkl
+</p>
 
-Liver_diseases_data.pkl
+---
 
-Verify Image Files:
-Ensure all image files are in the project directory:
-home_medical.jpg
+### 🩺 **Prediction Output**
 
-asthma_lungs.jpeg
+<p align="center">
+<img width="1919" height="880" alt="image" src="https://github.com/user-attachments/assets/86b7fd3f-949c-468e-b8d9-ebe0dbca9388" />
+</p>
 
-breast_cancer_ribbon.jpg
+---
 
-kidney_disease.jpg
+## 📝 **License**
 
-diabetes_glucose.jpg
+This project is licensed under the **MIT License**.  
+Feel free to **use, modify, and distribute**.
 
-heart_disease.jpeg
+---
 
-liver_disease.jpg
-(Images should be resized to 1920x640 pixels for optimal display.)
+## 🤝 **Contributing**
 
-Usage
-Run the App Locally:
-Navigate to the project directory and start the Streamlit app:
+We welcome contributions!
 
-cd /home/ichigo/Desktop/Medical diagnosis uisng AI
-streamlit run diseases.py
+```bash
+# Fork the repository
+# Create your feature branch
+git checkout -b feature/your-feature
 
-Access the App:
-Open your browser and go to http://localhost:8501.
-The home page displays a general medical image.
+# Commit your changes
+git commit -m "Add feature"
 
-Use the sidebar to select a disease.
+# Push to the branch
+git push origin feature/your-feature
 
-Input Data:
-Enter values for the required features (e.g., age, blood pressure) within the provided ranges.
+# Open a Pull Request 🚀
+```
 
-For Asthma, select binary options (0 = No, 1 = Yes).
+---
 
-Get Prediction:
-Click the "Predict" button to see the diagnosis (e.g., "HeartDisease Present" or "Predicted Severity: Mild") with a confidence score.
+## 🙏 **Acknowledgements**
 
-Explore Other Diseases:
-Change the disease selection to test different models and inputs.
+- Inspired by healthcare AI applications  
+- Built for ML & data analytics learning  
+- Powered by Open Source ❤️  
 
-Deployment
-To deploy the app online using Streamlit Community Cloud:
-Create a GitHub Repository:
-Initialize a new repository (e.g., medical-diagnosis-app) on GitHub.
+---
 
-Add all files (diseases.py, model files, image files, requirements.txt, and this README.md).
+## 📣 **Connect With Me**
 
-Push to GitHub:
-
-git init
-git add .
-git commit -m "Initial commit with app and models"
-git remote add origin https://github.com/Deepak3015/Implementation-of-AI-Powered-Medical-Diagnosis-System.git
-git push -u origin main
-
-If model files exceed 100MB, use Git LFS:
-
-git lfs install
-git lfs track "*.pkl"
-git add .gitattributes
-git add *.pkl
-git commit -m "Add model files with LFS"
-git push -u origin main
-
-Deploy on Streamlit Community Cloud:
-Go to streamlit.io/cloud.
-
-Sign in with your GitHub account.
-
-Click "New app" → "From existing repo."
-
-Select your repository and set the main file path to diseases.py.
-
-Click "Deploy" and wait for the app to go live.
-
-Access the Deployed App:
-Use the provided URL (e.g., https://app.py.streamlit.app).
-
-Project Structure
-
-Medical diagnosis uisng AI/
-├── diseases.py            # Main Streamlit app code
-├── Asthama_Severity_Mild_model.pkl  # Asthma Mild model
-├── Asthama_Severity_Moderate_model.pkl  # Asthma Moderate model
-├── Asthama_Severity_None_model.pkl  # Asthma None model
-├── breast_cancer_model.pkl         # Breast Cancer model
-├── Chronic_Kidney_Dsease_.pkl      # Chronic Kidney Disease model
-├── diabetes_model.pkl              # Diabetes model
-├── Heart_diseases.pkl              # Heart Disease model
-├── Liver_diseases_data.pkl         # Liver Diseases model
-├── home_medical.jpg                # Home page image
-├── asthma_lungs.jpeg               # Asthma image
-├── breast_cancer_ribbon.jpg        # Breast Cancer image
-├── kidney_disease.jpg              # Chronic Kidney Disease image
-├── diabetes_glucose.jpg            # Diabetes image
-├── heart_disease.jpeg              # Heart Disease image
-├── liver_disease.jpg               # Liver Diseases image
-├── requirements.txt                # Python dependencies
-└── README.md                       # This file
-
-Contributing
-Contributions are welcome! To contribute:
-Fork the repository.
-
-Create a new branch (git checkout -b feature-branch).
-
-Make your changes and commit them (git commit -m "Add new feature").
-
-Push to the branch (git push origin feature-branch).
-
-Open a pull request.
-
-Please ensure your code follows the project’s style and includes tests if applicable.
-License
-This project is licensed under the MIT License (LICENSE). Feel free to use, modify, and distribute it, but please include the original license.
-Acknowledgments
-Built with Streamlit, a fantastic framework for data apps.
-
-Inspired by the need for accessible medical diagnosis tools.
-
-Thanks to the open-source community for machine learning libraries like scikit-learn.
-
+<p align="center"> 
+  <a href="https://github.com/Deepak3015">
+    <img src="https://img.shields.io/badge/GitHub-Deepak3015-black?style=for-the-badge&logo=github">
+  </a> 
+  <a href="mailto:your-email@example.com">
+    <img src="https://img.shields.io/badge/Email-Contact-blue?style=for-the-badge&logo=gmail">
+  </a> 
+</p>
